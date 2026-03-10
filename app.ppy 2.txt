@@ -1,0 +1,212 @@
+import streamlit as st
+from groq import Groq
+
+# -------------------------
+# Page Configuration
+# -------------------------
+
+st.set_page_config(
+    page_title="MarketMind AI",
+    page_icon="📊",
+    layout="wide"
+)
+
+# -------------------------
+# Sidebar - API Key
+# -------------------------
+
+st.sidebar.title("🔑 Groq API Key")
+
+api_key = st.sidebar.text_input(
+    "Enter your Groq API Key",
+    type="password"
+)
+
+if not api_key:
+    st.warning("Please enter your Groq API Key in the sidebar to continue.")
+    st.stop()
+
+client = Groq(api_key=api_key)
+
+# -------------------------
+# Function to generate AI response
+# -------------------------
+
+def generate_response(prompt):
+
+    completion = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.7,
+        max_tokens=800
+    )
+
+    return completion.choices[0].message.content
+
+
+# -------------------------
+# Main Title
+# -------------------------
+
+st.title("📊 MarketMind")
+st.subheader("Generative AI–Powered Sales & Marketing Intelligence Platform")
+
+st.markdown("---")
+
+# -------------------------
+# Sidebar Menu
+# -------------------------
+
+menu = st.sidebar.selectbox(
+    "Select Feature",
+    [
+        "Market Analysis",
+        "Customer Insights",
+        "Campaign Generator",
+        "Sales Strategy"
+    ]
+)
+
+# ======================================================
+# MARKET ANALYSIS
+# ======================================================
+
+if menu == "Market Analysis":
+
+    st.header("📈 Market Analysis")
+
+    product = st.text_input("Enter Product / Service")
+    industry = st.text_input("Enter Industry")
+
+    if st.button("Analyze Market"):
+
+        prompt = f"""
+        You are a professional market analyst.
+
+        Analyze the market for:
+        Product: {product}
+        Industry: {industry}
+
+        Provide:
+        - Current market trends
+        - Top competitors
+        - Opportunities
+        - Risks
+        - Future predictions
+        """
+
+        with st.spinner("Analyzing market..."):
+            result = generate_response(prompt)
+
+        st.success("Analysis Generated")
+        st.write(result)
+
+# ======================================================
+# CUSTOMER INSIGHTS
+# ======================================================
+
+elif menu == "Customer Insights":
+
+    st.header("👥 Customer Insights")
+
+    product = st.text_input("Enter Product Name")
+
+    if st.button("Generate Insights"):
+
+        prompt = f"""
+        You are a customer behavior expert.
+
+        Generate insights for the product: {product}
+
+        Include:
+        - Target audience
+        - Customer demographics
+        - Pain points
+        - Buying motivations
+        - Marketing message suggestions
+        """
+
+        with st.spinner("Generating insights..."):
+            result = generate_response(prompt)
+
+        st.success("Insights Generated")
+        st.write(result)
+
+# ======================================================
+# CAMPAIGN GENERATOR
+# ======================================================
+
+elif menu == "Campaign Generator":
+
+    st.header("🚀 Marketing Campaign Generator")
+
+    product = st.text_input("Enter Product")
+
+    platform = st.selectbox(
+        "Select Marketing Platform",
+        ["Instagram", "Facebook", "LinkedIn", "Google Ads", "Twitter"]
+    )
+
+    if st.button("Generate Campaign"):
+
+        prompt = f"""
+        Create a marketing campaign.
+
+        Product: {product}
+        Platform: {platform}
+
+        Include:
+        - Campaign slogan
+        - Marketing strategy
+        - Ad copy
+        - Social media caption
+        - Call to action
+        """
+
+        with st.spinner("Generating campaign..."):
+            result = generate_response(prompt)
+
+        st.success("Campaign Generated")
+        st.write(result)
+
+# ======================================================
+# SALES STRATEGY
+# ======================================================
+
+elif menu == "Sales Strategy":
+
+    st.header("💰 Sales Strategy Generator")
+
+    product = st.text_input("Enter Product / Service")
+    market = st.text_input("Target Market")
+
+    if st.button("Generate Strategy"):
+
+        prompt = f"""
+        Create a sales strategy.
+
+        Product: {product}
+        Target Market: {market}
+
+        Include:
+        - Sales funnel
+        - Lead generation ideas
+        - Conversion strategies
+        - Pricing strategy
+        - Growth plan
+        """
+
+        with st.spinner("Generating strategy..."):
+            result = generate_response(prompt)
+
+        st.success("Strategy Generated")
+        st.write(result)
+
+# -------------------------
+# Footer
+# -------------------------
+
+st.markdown("---")
+st.caption("MarketMind AI | Built with Streamlit + Groq")
